@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 import dj_database_url
 from dotenv import load_dotenv
+from pathlib import Path
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,11 +29,9 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-key-change-in-prod")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-
-
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
@@ -91,6 +91,7 @@ WSGI_APPLICATION = 'BookApp.wsgi.application'
 
 ALLOWED_HOSTS = [os.getenv("RENDER_EXTERNAL_HOSTNAME", ""), "localhost"]
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -107,7 +108,7 @@ if db_url:
     )
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("CSRF_TRUSTED_ORIGINS", "https://*.onrender.com")
+    f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}",
 ]
 
 # Password validation
