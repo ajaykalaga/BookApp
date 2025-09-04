@@ -29,12 +29,12 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-key-change-in-prod")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ["*"]
+
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split()
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -89,14 +89,25 @@ WSGI_APPLICATION = 'BookApp.wsgi.application'
 # }
 
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", ".onrender.com,localhost,127.0.0.1").split(",")
+
+DATABASES = {"default": {}}
+db_url = os.getenv("DATABASE_URL", "")
+if db_url:
+    DATABASES["default"] = dj_database_url.config(
+        default=db_url,
         conn_max_age=600,
         ssl_require=True,
     )
-}
+else:
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 
+CSRF_TRUSTED_ORIGINS = [
+    os.getenv("CSRF_TRUSTED_ORIGINS", "https://*.onrender.com")
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
