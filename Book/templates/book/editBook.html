@@ -33,26 +33,34 @@
             <div class="col-md-7">
               <label class="form-label fw-semibold" for="{{ form.title.id_for_label }}">Title</label>
               {{ form.title }}
-              {{ form.title.errors }}
+              {% if form.title.errors %}
+                <div class="invalid-feedback d-block">{{ form.title.errors }}</div>
+              {% endif %}
             </div>
             <div class="col-md-5">
               <label class="form-label fw-semibold" for="{{ form.author.id_for_label }}">Author</label>
               {{ form.author }}
-              {{ form.author.errors }}
+              {% if form.author.errors %}
+                <div class="invalid-feedback d-block">{{ form.author.errors }}</div>
+              {% endif %}
             </div>
           </div>
 
           <div class="row g-3 mt-1">
             <div class="col-md-6">
-              {# FIX: use 'gener' everywhere #}
+              {# Using 'gener' to match the model field name #}
               <label class="form-label fw-semibold" for="{{ form.gener.id_for_label }}">Genre</label>
               {{ form.gener }}
-              {{ form.gener.errors }}
+              {% if form.gener.errors %}
+                <div class="invalid-feedback d-block">{{ form.gener.errors }}</div>
+              {% endif %}
             </div>
             <div class="col-md-6">
               <label class="form-label fw-semibold" for="{{ form.rating.id_for_label }}">Rating</label>
               {{ form.rating }}
-              {{ form.rating.errors }}
+              {% if form.rating.errors %}
+                <div class="invalid-feedback d-block">{{ form.rating.errors }}</div>
+              {% endif %}
               <div class="form-text">0 (worst) — 10 (best)</div>
             </div>
           </div>
@@ -60,7 +68,9 @@
           <div class="mt-3">
             <label class="form-label fw-semibold" for="{{ form.notes.id_for_label }}">Notes</label>
             {{ form.notes }}
-            {{ form.notes.errors }}
+            {% if form.notes.errors %}
+              <div class="invalid-feedback d-block">{{ form.notes.errors }}</div>
+            {% endif %}
           </div>
 
           <div class="d-flex justify-content-between align-items-center mt-4">

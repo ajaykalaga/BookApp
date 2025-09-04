@@ -19,17 +19,13 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          You’re about to delete <strong>{{ book.title }}</strong> by {{ book.author }}.
+          You're about to delete <strong>{{ book.title }}</strong> by {{ book.author }}.
           This action cannot be undone.
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button"
-                  class="btn btn-danger"
-                  onclick="__deleteBook('{{ book.id }}', '{% url 'deleteBook' id=book.id %}')">
-            Yes, delete
-          </button>
-                    <form method="POST" action="{% url 'deleteBook' id=book.id %}" class="d-inline">
+          <!-- Only keep ONE delete button -->
+          <form method="POST" action="{% url 'deleteBook' id=book.id %}" class="d-inline">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Yes, delete</button>
           </form>
