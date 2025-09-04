@@ -89,21 +89,22 @@ WSGI_APPLICATION = 'BookApp.wsgi.application'
 # }
 
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", ".onrender.com,localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [os.getenv("RENDER_EXTERNAL_HOSTNAME", ""), "localhost"]
 
-DATABASES = {"default": {}}
-db_url = os.getenv("DATABASE_URL", "")
-if db_url:
-    DATABASES["default"] = dj_database_url.config(
-        default=db_url,
-        conn_max_age=600,
-        ssl_require=True,
-    )
-else:
-    DATABASES["default"] = {
+DATABASES = {
+    "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
+}
+
+db_url = os.getenv("DATABASE_URL", "").strip()
+if db_url:
+    DATABASES["default"] = dj_database_url.parse(
+        db_url,
+        conn_max_age=600,
+        ssl_require=True,
+    )
 
 CSRF_TRUSTED_ORIGINS = [
     os.getenv("CSRF_TRUSTED_ORIGINS", "https://*.onrender.com")
