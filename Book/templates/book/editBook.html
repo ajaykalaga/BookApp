@@ -20,6 +20,8 @@
       </div>
 
       <div class="card-body">
+
+        {# EDIT FORM (no nested forms inside) #}
         <form method="POST" novalidate>
           {% csrf_token %}
 
@@ -31,21 +33,26 @@
             <div class="col-md-7">
               <label class="form-label fw-semibold" for="{{ form.title.id_for_label }}">Title</label>
               {{ form.title }}
+              {{ form.title.errors }}
             </div>
             <div class="col-md-5">
               <label class="form-label fw-semibold" for="{{ form.author.id_for_label }}">Author</label>
               {{ form.author }}
+              {{ form.author.errors }}
             </div>
           </div>
 
           <div class="row g-3 mt-1">
             <div class="col-md-6">
-              <label class="form-label fw-semibold" for="{{ form.genre.id_for_label }}">Genre</label>
+              {# FIX: use 'gener' everywhere #}
+              <label class="form-label fw-semibold" for="{{ form.gener.id_for_label }}">Genre</label>
               {{ form.gener }}
+              {{ form.gener.errors }}
             </div>
             <div class="col-md-6">
               <label class="form-label fw-semibold" for="{{ form.rating.id_for_label }}">Rating</label>
               {{ form.rating }}
+              {{ form.rating.errors }}
               <div class="form-text">0 (worst) — 10 (best)</div>
             </div>
           </div>
@@ -53,20 +60,23 @@
           <div class="mt-3">
             <label class="form-label fw-semibold" for="{{ form.notes.id_for_label }}">Notes</label>
             {{ form.notes }}
+            {{ form.notes.errors }}
           </div>
 
           <div class="d-flex justify-content-between align-items-center mt-4">
             <a href="{% url 'index' %}" class="btn btn-outline-secondary">Cancel</a>
             <div class="d-flex gap-2">
-              <!-- Delete triggers modal -->
-              {% comment %} <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-                Delete
-              </button> {% endcomment %}
-              {% include "book/delete_model.html" with book=book %}
+              {# Keep only the Save button inside this form #}
               <button type="submit" class="btn btn-primary px-4">Save Changes</button>
             </div>
           </div>
         </form>
+
+        {# DELETE BUTTON + MODAL lives OUTSIDE the edit form to avoid nested forms #}
+        <div class="d-flex justify-content-end mt-3">
+          {% include "book/delete_model.html" with book=book %}
+        </div>
+
       </div>
     </div>
 
