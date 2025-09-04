@@ -29,42 +29,12 @@
                   onclick="__deleteBook('{{ book.id }}', '{% url 'deleteBook' id=book.id %}')">
             Yes, delete
           </button>
+                    <form method="POST" action="{% url 'deleteBook' id=book.id %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
 {% endif %}
-
-<script>
-  (function() {
-    if (window.__deleteBook) return; // don’t redefine if already loaded
-
-    function getCookie(name) {
-      const cookies = document.cookie.split(';');
-      for (let c of cookies) {
-        c = c.trim();
-        if (c.startsWith(name + '=')) {
-          return decodeURIComponent(c.substring(name.length + 1));
-        }
-      }
-      return null;
-    }
-
-    window.__deleteBook = function(bookId, actionUrl) {
-      const csrf = getCookie('csrftoken');
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = actionUrl;
-      form.style.display = 'none';
-
-      const token = document.createElement('input');
-      token.type = 'hidden';
-      token.name = 'csrfmiddlewaretoken';
-      token.value = csrf;
-
-      form.appendChild(token);
-      document.body.appendChild(form);
-      form.submit();
-    };
-  })();
-</script>
