@@ -89,8 +89,6 @@ WSGI_APPLICATION = 'BookApp.wsgi.application'
 # }
 
 
-ALLOWED_HOSTS = [os.getenv("RENDER_EXTERNAL_HOSTNAME", ""), "localhost"]
-
 
 DATABASES = {
     "default": {
@@ -107,9 +105,17 @@ if db_url:
         ssl_require=True,
     )
 
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}",
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "bookapp-hi8v.onrender.com").split(",")
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://bookapp-hi8v.onrender.com"
+).split(",")
+
+# behind Render’s proxy
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
