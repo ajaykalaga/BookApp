@@ -1,0 +1,106 @@
+{% extends "book/base.html" %} 
+{% block title %}Library — Home
+{% endblock %} 
+{% block nav_home_active %}active{% endblock %} 
+{% block content %} 
+{% if q %}
+<div class="alert alert-info py-2">
+  Showing results for “<strong>{{ q }}</strong>”
+</div>
+{% endif %} 
+{% if books %}
+<div class="row g-3">
+  {% for book in books %}
+  <div class="col-12 col-sm-6 col-lg-4">
+    <div class="card h-100 shadow-sm hover-lift">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-start justify-content-between mb-2">
+          <h5 class="card-title mb-0">{{ book.title }}</h5>
+          <!-- Genre badge with simple color mapping -->
+          {% if book.gener == "Fiction" %}
+          <span class="badge text-bg-primary">Fiction</span>
+          {% elif book.gener == "Non-fiction" %}
+          <span class="badge text-bg-secondary">Non-fiction</span>
+          {% elif book.gener == "Sci-Fi" %}
+          <span class="badge text-bg-info">Sci-Fi</span>
+          {% elif book.gener == "Fantasy" %}
+          <span class="badge text-bg-warning text-dark">Fantasy</span>
+          {% elif book.gener == "Biography" %}
+          <span class="badge text-bg-success">Biography</span>
+          {% else %}
+          <span class="badge text-bg-light text-dark">Other</span>
+          {% endif %}
+        </div>
+
+<h6 class="card-subtitle text-muted mb-2">
+  by
+  {% if book.owner %}
+    {% if book.owner == request.user %}
+      <span class="badge bg-success">Added By You</span>
+    {% else %}
+      {% if request.user.is_staff or request.user.is_superuser %}
+        <a class="badge bg-success" href="{% url 'profile_user' username=book.owner.username %}">
+          @{{ book.owner.username }}
+        </a>
+      {% else %}
+        <a class="badge bg-success" href="{% url 'profile_user' username=book.owner.username %}">@{{ book.owner.username }}</a>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    Anonymous
+  {% endif %}
+</h6>
+        <div class="mb-3 small">
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Rating</span>
+            <span class="fw-semibold">{{ book.rating|default:"—" }}/10</span>
+          </div>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-label="Rating"
+            aria-valuemin="0"
+            aria-valuemax="10"
+          >
+            <div
+              class="progress-bar"
+              style="width: {{ book.rating|default:0 }}0%"
+            ></div>
+          </div>
+        </div>
+        {% if book.notes %}
+        <p class="card-text text-muted small flex-grow-1">
+          {{ book.notes|truncatechars:120 }}
+        </p>
+        {% else %}
+        <div class="flex-grow-1"></div>
+        {% endif %}
+
+        <div class="d-flex align-items-center justify-content-between mt-2">
+          <small class="text-muted"
+            >Added {{ book.created_at|date:"M j, Y, g:i a" }}</small
+          >
+          <div class="btn-group">
+            <a
+              href="{% url 'editBook' id=book.id %}"
+              class="btn btn-sm btn-outline-primary"
+              >Edit</a
+            >
+            <a
+              href="{% url 'bookDetail' id=book.id %}"
+              class="btn btn-sm btn-primary"
+              >View</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+  <h5 class="text-muted mb-3">No books yet</h5>
+  <a class="btn btn-primary" href="{% url 'addBook' %}">Add your first book</a>
+</div>
+{% endif %} {% endblock %}

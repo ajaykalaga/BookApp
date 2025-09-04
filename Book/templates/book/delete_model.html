@@ -1,0 +1,47 @@
+{% comment %} expects `book` in context {% endcomment %}
+
+{% if request.user.is_authenticated %}
+  {% if request.user == book.owner or request.user.is_staff %}
+    <button type="button" class="btn btn-outline-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#confirmDeleteModal-{{ book.id }}">
+      Delete
+    </button>
+
+    <div class="modal fade" id="confirmDeleteModal-{{ book.id }}" tabindex="-1"
+         aria-labelledby="confirmDeleteLabel-{{ book.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="confirmDeleteLabel-{{ book.id }}">
+              Delete this book?
+            </h5>
+            <button type="button" class="btn-close btn-close-white"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You’re about to delete <strong>{{ book.title }}</strong> by {{ book.author }}.
+            This action cannot be undone.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form method="POST" action="{% url 'deleteBook' id=book.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Yes, delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% comment %} {% else %}
+    <button type="button" class="btn btn-outline-danger" disabled
+            title="Only the owner can delete">
+      Delete
+    </button> {% endcomment %}
+  {% endif %}
+{% comment %} {% else %}
+  <button type="button" class="btn btn-outline-danger" disabled
+          title="Log in to manage">
+    Delete
+  </button> {% endcomment %}
+{% endif %}

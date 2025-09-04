@@ -1,0 +1,1 @@
+web: gunicorn BookApp.wsgi:application --preload --timeout 120

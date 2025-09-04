@@ -1,0 +1,126 @@
+{% extends "book/base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-12 col-lg-10">
+
+    <!-- Header / Avatar -->
+    <div class="card shadow border-0 overflow-hidden mb-3">
+      <div class="bg-primary bg-gradient text-white p-4 d-flex align-items-center">
+        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+             style="width:90px;height:90px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.35)">
+          <span class="fs-2 fw-bold">
+            {% if profile.display_name %}
+              {{ profile.display_name|slice:":1"|upper }}
+            {% else %}
+              {{ user_obj.username|slice:":1"|upper }}
+            {% endif %}
+          </span>
+        </div>
+        <div class="flex-grow-1">
+          <h3 class="mb-1">@{{ user_obj.username }}</h3>
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            {% if profile.display_name %}<strong>{{ profile.display_name }}</strong>{% endif %}
+            {% if profile.location %}<span class="badge bg-light text-dark">{{ profile.location }}</span>{% endif %}
+          </div>
+          <small class="opacity-75">Joined: {{ user_obj.date_joined|date:"M j, Y" }}</small>
+        </div>
+        <div>
+          <button class="btn btn-light text-primary" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#editProfile"
+                  aria-expanded="false" aria-controls="editProfile">
+            Edit Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- View mode: bio + stats -->
+      <div class="card-body">
+        {% if profile.bio %}
+          <p class="mb-3">{{ profile.bio|linebreaks }}</p>
+        {% else %}
+          <p class="text-muted">No bio yet. Click <em>Edit Profile</em> to add one.</p>
+        {% endif %}
+
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <div class="p-3 border rounded h-100">
+              <div class="text-muted small">Display Name</div>
+              <div class="fw-semibold">{{ profile.display_name|default:"—" }}</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="p-3 border rounded h-100">
+              <div class="text-muted small">Location</div>
+              <div class="fw-semibold">{{ profile.location|default:"—" }}</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="p-3 border rounded h-100">
+              <div class="text-muted small">Books added</div>
+              <div class="fs-4 fw-semibold">{{ count }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit form (collapsible) -->
+    <div id="editProfile" class="collapse {% if start_in_edit %}show{% endif %}">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">Edit Profile</div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label">Display Name</label>
+              {{ form.display_name }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Location</label>
+              {{ form.location }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Bio</label>
+              {{ form.bio }}
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'profile_me' %}" class="btn btn-outline-secondary">Cancel</a>
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent books -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-light">Your Recent Books</div>
+      <div class="card-body">
+        {% if recent_books %}
+          <div class="row g-3">
+            {% for b in recent_books %}
+              <div class="col-12 col-sm-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <strong>{{ b.title }}</strong>
+                    <span class="badge bg-secondary">{{ b.gener }}</span>
+                  </div>
+                  <div class="text-muted small mb-2">Rating: {{ b.rating|default:"—" }}/10</div>
+                  <a href="{% url 'bookDetail' id=b.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted mb-0">No books yet. <a href="{% url 'addBook' %}">Add your first book</a>.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

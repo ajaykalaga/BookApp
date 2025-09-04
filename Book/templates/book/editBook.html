@@ -1,0 +1,79 @@
+{% extends "book/base.html" %}
+{% block title %}Edit Book — {{ book.title }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Book</li>
+  </ol>
+</nav>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-warning text-dark">
+        <div class="d-flex align-items-center w-100">
+          <span class="fs-5">✏️ Edit Book</span>
+          <span class="ms-auto small text-muted">ID: {{ book.id }}</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="row g-3">
+            <div class="col-md-7">
+              <label class="form-label fw-semibold" for="{{ form.title.id_for_label }}">Title</label>
+              {{ form.title }}
+            </div>
+            <div class="col-md-5">
+              <label class="form-label fw-semibold" for="{{ form.author.id_for_label }}">Author</label>
+              {{ form.author }}
+            </div>
+          </div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="{{ form.genre.id_for_label }}">Genre</label>
+              {{ form.gener }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="{{ form.rating.id_for_label }}">Rating</label>
+              {{ form.rating }}
+              <div class="form-text">0 (worst) — 10 (best)</div>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <label class="form-label fw-semibold" for="{{ form.notes.id_for_label }}">Notes</label>
+            {{ form.notes }}
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary">Cancel</a>
+            <div class="d-flex gap-2">
+              <!-- Delete triggers modal -->
+              {% comment %} <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                Delete
+              </button> {% endcomment %}
+              {% include "book/delete_model.html" with book=book %}
+              <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="text-muted small text-center mt-3">
+      Last updated will reflect after saving.
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "book/base.html" %}
+{% block title %}Add Book{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Add Book</li>
+  </ol>
+</nav>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <div class="d-flex align-items-center gap-2">
+          <span class="fs-5">➕ Add a New Book</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+
+          <!-- Title + Author (floating labels) -->
+          <div class="row g-3">
+            <div class="col-md-7">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="title" name="title"
+                       placeholder="Book Title" required maxlength="150" autofocus>
+                <label for="title">Title</label>
+                <div class="form-text">Give the exact title as on the cover.</div>
+              </div>
+            </div>
+
+            <div class="col-md-5">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="author" name="author"
+                       placeholder="Author" required maxlength="120">
+                <label for="author">Author</label>
+                <div class="form-text">Primary author (you can add more in notes).</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Genre + Rating -->
+          <div class="row g-3 mt-1">
+            <div class="col-md-6">
+              <label for="gener" class="form-label fw-semibold mb-1">Gener</label>
+              <select class="form-select" id="gener" name="gener" required>
+                {% for gener in GENERS %}
+                <option value="{{ gener }}">{{ gener }}</option>
+                {% endfor %}
+              </select>
+              <div class="form-text">Choose the closest category.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold mb-1">Rating</label>
+              <div class="d-flex align-items-center gap-3">
+                <!-- Range slider + numeric input kept in sync -->
+                <input type="range" class="form-range" min="0" max="10" step="1"
+                       id="ratingRange" value="5" oninput="ratingNumber.value = this.value">
+                <input type="number" class="form-control" style="max-width: 90px"
+                       id="ratingNumber" name="rating" min="0" max="10" step="1" value="5"
+                       oninput="ratingRange.value = this.value">
+              </div>
+              <div class="form-text">0 (worst) — 10 (best)</div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="mt-3">
+            <label for="notes" class="form-label fw-semibold mb-1">Notes</label>
+            <textarea class="form-control" id="notes" name="notes" rows="4"
+                      placeholder="Key takeaways, memorable quotes, edition info, etc."></textarea>
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success px-4">Save Book</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Small tip -->
+    <div class="text-muted small text-center mt-3">
+      Pro tip: You can edit later from the book card on the home page.
+    </div>
+  </div>
+</div>
+
+<script>
+  // Keep range and number inputs in sync even if user types out-of-bounds
+  (function(){
+    const range = document.getElementById('ratingRange');
+    const num   = document.getElementById('ratingNumber');
+    if(!range || !num) return;
+    function clamp(v){ v = parseInt(v||0,10); if(isNaN(v)) v = 0; return Math.min(10, Math.max(0, v)); }
+    num.addEventListener('change', () => { num.value = clamp(num.value); range.value = num.value; });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "book/base.html" %}
+{% block title %}Recently Added — Library{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Recently Added</li>
+  </ol>
+</nav>
+
+<h3 class="mb-3">Recently Added Books</h3>
+
+{% if recentAdded %}
+  <div class="row">
+    {% for book in recentAdded %}
+      <div class="col-md-6 col-lg-4 mb-3">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-1">{{ book.title }}</h5>
+
+            <!-- byline with "Added By You" -->
+            <h6 class="card-subtitle text-muted mb-2">
+              by
+              {% if book.owner %}
+                {% if user.is_authenticated and book.owner_id == user.id %}
+                  <span class="badge bg-success">Added By You</span>
+                {% else %}
+                  <a class="badge bg-success" href="{% url 'profile_user' username=book.owner.username %}">@{{ book.owner.username }}</a>
+                {% endif %}
+              {% else %}
+                Anonymous
+              {% endif %}
+            </h6>
+
+            <p class="mb-2 small text-muted">
+              Genre: {{ book.get_gener_display }} · Rating: {{ book.rating }}/10
+            </p>
+
+            {% if book.notes %}
+              <p class="card-text flex-grow-1">{{ book.notes|truncatechars:100 }}</p>
+            {% else %}
+              <div class="flex-grow-1"></div>
+            {% endif %}
+
+            <p class="text-muted small mb-2">
+              Added: {{ book.created_at|date:"M j, Y, g:i a" }}
+            </p>
+
+            <a href="{% url 'bookDetail' id=book.id %}" class="btn btn-sm btn-outline-primary mt-auto">View</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center text-muted py-5">
+    <p>No books have been added recently.</p>
+    <a class="btn btn-primary" href="{% url 'addBook' %}">Add a Book</a>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "book/base.html" %}
+{% block title %}My Books — Library{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">My Books</li>
+  </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">My Books</h3>
+  <a class="btn btn-primary" href="{% url 'addBook' %}">+ Add Book</a>
+</div>
+
+<form class="row g-2 mb-3" method="get" action="{% url 'myBooks' %}">
+  <div class="col-sm-8 col-md-6">
+    <input class="form-control" type="search" name="q" placeholder="Search your books by title or author"
+           value="{{ request.GET.q }}">
+  </div>
+  <div class="col-sm-auto">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </div>
+</form>
+
+{% if q %}
+  <div class="alert alert-info py-2">Showing results for “<strong>{{ q }}</strong>”.</div>
+{% endif %}
+
+{% if books %}
+  <div class="row">
+    {% for book in books %}
+      <div class="col-md-6 col-lg-4 mb-3">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-1">{{ book.title }}</h5>
+            <h6 class="card-subtitle text-muted mb-2">by {{ book.author }}</h6>
+
+            <p class="mb-2 small text-muted">
+              Genre: {{ book.get_gener_display }} · Rating: {{ book.rating }}/10
+            </p>
+
+            {% if book.notes %}
+              <p class="card-text flex-grow-1">{{ book.notes|truncatechars:120 }}</p>
+            {% else %}
+              <div class="flex-grow-1"></div>
+            {% endif %}
+
+            <p class="text-muted small mb-2">
+              Added: {{ book.created_at|date:"M j, Y, g:i a" }}
+            </p>
+
+            <div class="d-flex gap-2 mt-auto">
+              <a href="{% url 'bookDetail' id=book.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+              <a href="{% url 'editBook' id=book.id %}" class="btn btn-sm btn-warning">Edit</a>
+              <form method="post" action="{% url 'deleteBook' id=book.id %}" class="d-inline"
+                    onsubmit="return confirm('Delete this book permanently?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center text-muted py-5">
+    <p class="mb-2">You haven’t added any books yet.</p>
+    <a class="btn btn-primary" href="{% url 'addBook' %}">Add your first book</a>
+  </div>
+{% endif %}
+{% endblock %}
